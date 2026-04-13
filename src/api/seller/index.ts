@@ -1,0 +1,1 @@
+export { getSellerInfo, getSellerRating } from './seller.api';
