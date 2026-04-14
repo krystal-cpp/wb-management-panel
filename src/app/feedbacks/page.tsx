@@ -219,6 +219,7 @@ export default function FeedbacksPage() {
                 onCancel={() => setModalOpen(false)}
                 onOk={handleSubmitAnswer}
                 okText={isEditMode ? 'Сохранить' : 'Отправить'}
+                cancelText='Отменить'
                 confirmLoading={submitting}
                 okButtonProps={{ disabled: !answerText.trim() }}>
                 {selectedFeedback && (
