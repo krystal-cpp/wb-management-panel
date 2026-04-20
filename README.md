@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WB Panel
 
-## Getting Started
+Панель управления магазином на Wildberries. Позволяет работать с отзывами, вопросами и чатами с покупателями в едином интерфейсе.
 
-First, run the development server:
+## 🔗 Демо
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+> [Открыть демо](https://wb-panel.netlify.app/)
+
+---
+
+## Стек
+
+- **Next.js 14** (App Router)
+- **TypeScript**
+- **Ant Design** — UI-компоненты
+- **Axios** — HTTP-запросы к WB API
+- **Day.js** — форматирование дат
+
+---
+
+## Функциональность
+
+### Главная страница
+- Сводка по магазину: количество отзывов без ответа, вопросов без ответа и активных чатов
+- Быстрые переходы в каждый раздел
+
+### Отзывы (`/feedbacks`)
+- Три вкладки: без ответа, отвеченные, архив
+- Карточка отзыва с оценкой, текстом, достоинствами/недостатками и тегами
+- Ответ на отзыв и редактирование ответа через модальное окно
+
+
+### Вопросы (`/questions`)
+- Две вкладки: без ответа, отвеченные
+- Ответ на вопрос и редактирование через модальное окно
+
+
+### Чаты (`/chats`)
+- Список чатов с покупателями
+- Переписка в формате мессенджера
+- Отправка сообщений (Enter — отправить, Shift+Enter — перенос строки)
+
+---
+
+## Структура проекта
+
+```
+src/
+├── app/                  # Страницы и layout (Next.js App Router)
+│   ├── layout.tsx        # Корневой layout с шапкой магазина
+│   ├── page.tsx          # Главная страница (сводка)
+│   ├── feedbacks/        # Страница отзывов
+│   ├── questions/        # Страница вопросов
+│   └── chats/            # Страница чатов
+├── api/                  # Функции запросов к WB API
+│   ├── seller/
+│   ├── feedbacks/
+│   ├── questions/
+│   └── chats/
+├── entities/             # TypeScript-типы по доменам
+│   ├── seller/
+│   ├── feedback/
+│   ├── question/
+│   └── chat/
+└── mocks/                # Моковые данные (вместо реального API)
+    ├── seller.ts
+    ├── feedbacks.ts
+    ├── questions.ts
+    └── chats.ts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Запуск локально
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Установить зависимости
+npm install
+ 
+# Запустить dev-сервер
+npm run dev
+```
 
-## Learn More
+Откройте [http://localhost:3000](http://localhost:3000) в браузере.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Подключение реального WB API
 
-## Deploy on Vercel
+В проекте все запросы работают на моковых данных. Чтобы подключить реальный API:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Создайте токен в [личном кабинете Wildberries](https://seller.wildberries.ru/api-integrations) с категориями **Вопросы и отзывы** и **Чат с покупателями**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. Создайте файл `.env.local` в корне проекта:
+
+```env
+WB_API_TOKEN=ваш_токен_здесь
+```
+
+3. В каждом файле `api/*/` поменяйте флаг:
+
+```ts
+// было
+const USE_MOCK = true
+ 
+// стало
+const USE_MOCK = false
+```
+
+---
+
+## API
+
+Проект использует следующие эндпоинты [WB API](https://dev.wildberries.ru):
+
+| Метод | Эндпоинт | Описание |
+|-------|----------|----------|
+| GET | `/api/v1/seller-info` | Информация о продавце |
+| GET | `/api/v1/feedbacks` | Список отзывов |
+| POST | `/api/v1/feedbacks/answer` | Ответить на отзыв |
+| PATCH | `/api/v1/feedbacks/answer` | Редактировать ответ на отзыв |
+| GET | `/api/v1/feedbacks/archive` | Архивные отзывы |
+| GET | `/api/v1/questions` | Список вопросов |
+| PATCH | `/api/v1/questions` | Ответить на вопрос |
+| GET | `/api/v1/seller/chats` | Список чатов |
+| GET | `/api/v1/seller/events` | События чатов (сообщения) |
+| POST | `/api/v1/seller/message` | Отправить сообщение |
